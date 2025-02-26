@@ -9,7 +9,7 @@ channels = 1
 print("start recording")
 audio_data = sd.rec(int(duration * sample_rate), samplerate=sample_rate, channels=channels, dtype=np.int16)
 sd.wait() 
-print("recorede")
+print("recoreded")
 
 file_name = "recorded_audio.wav"
 with wave.open(file_name, 'wb') as wf:
