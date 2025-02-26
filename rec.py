@@ -1,26 +1,21 @@
-import cv2
+import sounddevice as sd
+import wave
+import numpy as np
 
-cap = cv2.VideoCapture(0)   
-if cap.isOpened:
-    file_path = './results/test_record.avi'    
-    fps = 30.0                     
-    fourcc = cv2.VideoWriter_fourcc(*'DIVX') 
-    width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
-    height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
-    size = (int(width), int(height))                      
-    out = cv2.VideoWriter(file_path, fourcc, fps, size) # VideoWriter object
-    while True:
-        ret, frame = cap.read()
-        if ret:
-            cv2.imshow('camera-recording',frame)
-            out.write(frame)                        
-            if cv2.waitKey(int(1000/fps)) != -1: 
-                break
-        else:
-            print("no frame!")
-            break
-    out.release()                                   
-else:
-    print("can't open camera!")
-cap.release()
-cv2.destroyAllWindows()
+duration = 5 
+sample_rate = 44100 
+channels = 1 
+
+print("start recording")
+audio_data = sd.rec(int(duration * sample_rate), samplerate=sample_rate, channels=channels, dtype=np.int16)
+sd.wait() 
+print("recorede")
+
+file_name = "recorded_audio.wav"
+with wave.open(file_name, 'wb') as wf:
+    wf.setnchannels(channels)
+    wf.setsampwidth(2)  
+    wf.setframerate(sample_rate)
+    wf.writeframes(audio_data.tobytes())
+
+print(f"saved as '{file_name}'")
